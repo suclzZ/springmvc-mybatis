@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="mybatis.properties">
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+        <!--${username:user}-->
+        <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/>
+    </properties>
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="multipleResultSetsEnabled" value="true"/>
+        <setting name="useColumnLabel" value="true"/>
+        <setting name="useGeneratedKeys" value="false"/>
+        <setting name="autoMappingBehavior" value="PARTIAL"/>
+        <setting name="autoMappingUnknownColumnBehavior" value="WARNING"/>
+        <setting name="defaultExecutorType" value="SIMPLE"/>
+        <setting name="defaultStatementTimeout" value="25"/>
+        <setting name="defaultFetchSize" value="100"/>
+        <setting name="safeRowBoundsEnabled" value="false"/>
+        <setting name="mapUnderscoreToCamelCase" value="false"/>
+        <setting name="localCacheScope" value="SESSION"/>
+        <setting name="jdbcTypeForNull" value="OTHER"/>
+        <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+
+    <typeAliases>
+        <!--<typeAlias type="java.lang.String" alias="string"></typeAlias>-->
+        <!-- @Alias("user") -->
+        <package name="com.sucl.mybatis.model"></package>
+    </typeAliases>
+
+    <typeHandlers>
+        <!--继承BaseTypeHandler,泛型决定javaType加上注解@MappedJdbcTypes(JdbcType.VARCHAR)-->
+        <!-- 通过@MappedTypes({})知道javaType -->
+        <typeHandler handler="SomeBaseTypeHandler" javaType="String" jdbcType="VARCHAR"></typeHandler>
+        <!--<package name="com.sucl.mybatis.xml.support"/>-->
+        <typeHandler handler="BooleanCahrTypeHandler" jdbcType="CHAR" javaType="Boolean"/>
+    </typeHandlers>
+
+    <objectFactory type="SomeObjectFactory">
+        <property name="someProperty" value="10"></property>
+    </objectFactory>
+
+    <plugins>
+        <!--SqlSessionFactoryBuilder.build(myConfig)重写方法覆盖原有拦截器-->
+        <plugin interceptor="UpdateInterceptor">
+            <property name="someProperty" value="20"></property>
+        </plugin>
+    </plugins>
+
+    <!-- 可配置多数据源 -->
+    <environments default="development">
+        <environment id="development">
+            <!-- JDBC|MANAGED-->
+            <transactionManager type="JDBC"/>
+            <!-- DatabaseIdProvider自定义数据源提供源 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- org.apache.ibatis.mapping.DatabaseIdProvider -->
+    <!-- 在mapper中可以使用，区分不同数据库执行同sql，比如部署oracle环境与mysql环境分别处理 -->
+    <databaseIdProvider type="DB_VENDOR">
+        <property name="MySQL" value="mysql"/>
+        <property name="ORACLE" value="oracle"/>
+    </databaseIdProvider>
+
+    <!-- xml -->
+    <mappers>
+        <!-- xml与接口同包同名 -->
+        <package name="com.sucl.mybatis.mapper"></package>
+        <!-- 相对于类 -->
+        <!--<mapper resource="com/sucl/mybatis/xml/UserMapper.xml"></mapper>-->
+        <!--<mapper class="UserMapper"></mapper>-->
+        <!--<mapper url="file:com/sucl/mybatis/xml/UserMapper.xml"></mapper>-->
+    </mappers>
+</configuration>

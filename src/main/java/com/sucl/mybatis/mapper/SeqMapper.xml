@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sucl.mybatis.mapper.SeqMapper">
+
+    <select id="get"  resultType="Seq">
+		select * from seq where code = #{code}
+	</select>
+    <update id="update" parameterType="Seq">
+        update seq set value = #{value} where code = #{code}
+    </update>
+    <insert id="save" parameterType="Seq">
+        insert into seq(code , value)
+        values(#{code},#{value})
+    </insert>
+    <delete id="delete">
+        delete from seq where code = #{code}
+    </delete>
+
+</mapper>
